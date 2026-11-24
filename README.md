@@ -1,12 +1,12 @@
 # Vapor Firefox Extension (`vapor-ff`)
 
-**Vapor** is a minimalist Firefox Manifest V3 extension (`strict_min_version: "142.0"`) that compares your PC's CPU, GPU, and RAM against `MINIMUM` and `RECOMMENDED` system requirements on Steam store pages (`https://store.steampowered.com/app/*`), rendering percentage pills, breakdown tooltips, and direct 3-way PassMark comparison links.
+**Vapor** is a minimalist Firefox Manifest V3 extension (`strict_min_version: "142.0"` for Firefox Desktop and Firefox for Android) that compares your PC's CPU, GPU, and RAM against `MINIMUM` and `RECOMMENDED` system requirements on Steam store pages (`https://store.steampowered.com/app/*`), rendering percentage pills, breakdown tooltips, and direct 3-way PassMark comparison links.
 
 It pairs with the [Vapor Go + SQLite REST API (`vapor-api`)](https://github.com/paulo-sampaio/vapor-api), defaulting to `https://vapor.kirimure.io`.
 
 ## Features & User Experience
 
-- **First-Install Onboarding:** Automatically opens the configuration tab on install so you can pick your CPU, GPU, and RAM once (`browser.storage.sync`).
+- **First-Install Onboarding:** Automatically opens the configuration tab on install so you can pick your CPU, GPU, and RAM once (`browser.storage.sync`; note that on Firefox for Android, `storage.sync` stores settings locally without cross-device sync due to Mozilla bug 1625257).
 - **Unconfigured & Error Badges:** Shows clickable `?` badges on Steam requirement headings when unconfigured, or `!` badges if the API is unreachable; clicking opens settings.
 - **Section Summary Pills:** Displays weighted overall percentage pills (`70% GPU + 30% CPU`) beside each `MINIMUM` and `RECOMMENDED` heading, with amber `⚠` warning flags if your RAM is below spec.
 - **Inline Spec Pills & PassMark Links:** Appends individual percentage micro-pills beside `Processor`, `Graphics`, and `Memory` rows. CPU and GPU pills link directly to PassMark's 3-way comparison (`You vs Minimum vs Recommended`) when IDs are available.
@@ -66,7 +66,7 @@ Run all commands from `extension-ff/`:
 node --test tests/*.test.js
 
 # Manifest & zero-innerHTML/eval policy checks
-python3 -c 'import json; m=json.load(open("manifest.json")); assert m["manifest_version"]==3; assert m["browser_specific_settings"]["gecko"]["data_collection_permissions"]["required"]==["websiteContent"]; assert "https://vapor.kirimure.io/*" in m["host_permissions"]'
+python3 -c 'import json; m=json.load(open("manifest.json")); assert m["manifest_version"]==3; assert m["browser_specific_settings"]["gecko"]["data_collection_permissions"]["required"]==["websiteContent"]; assert m["browser_specific_settings"]["gecko_android"]["strict_min_version"]=="142.0"; assert "https://vapor.kirimure.io/*" in m["host_permissions"]'
 ! grep -rnE "innerHTML|outerHTML|insertAdjacentHTML|eval\(" . --exclude-dir=.git --exclude-dir=.github --exclude-dir=.agents --exclude='*.md'
 
 # Lint & build uploadable zip for addons.mozilla.org (AMO)
