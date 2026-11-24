@@ -22,9 +22,19 @@ function sanitizeApiBaseUrl(raw) {
   }
 }
 
+async function openOptionsSafe() {
+  try {
+    await browser.runtime.openOptionsPage();
+  } catch {
+    if (browser.tabs?.create) {
+      await browser.tabs.create({ url: browser.runtime.getURL("options.html") });
+    }
+  }
+}
+
 browser.runtime.onInstalled.addListener(async ({ reason }) => {
   if (reason === "install") {
-    browser.runtime.openOptionsPage();
+    await openOptionsSafe();
     return;
   }
   if (reason === "update") {
@@ -113,7 +123,7 @@ browser.runtime.onMessage.addListener((message, sender) => {
 
   switch (message.action) {
     case "vapor:openOptions":
-      return browser.runtime.openOptionsPage().then(() => ({ ok: true }));
+      return openOptionsSafe().then(() => ({ ok: true }));
 
     case "vapor:health":
       return (async () => {
