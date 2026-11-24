@@ -1,7 +1,8 @@
 (function () {
   "use strict";
 
-  const DEFAULT_API_URL = "https://vapor.nargothrond.pub";
+  const DEFAULT_API_URL = "https://vapor.kirimure.io";
+  const LEGACY_API_ORIGINS = new Set(["https://vapor.nargothrond.pub"]);
 
   const state = {
     cpu: null,
@@ -23,7 +24,17 @@
   }
 
   function isDefaultApiOrigin(origin) {
-    return origin === "https://vapor.nargothrond.pub";
+    return origin === new URL(DEFAULT_API_URL).origin;
+  }
+
+  async function ensureOriginPermission(normalizedUrl) {
+    const origin = new URL(normalizedUrl).origin;
+    if (!isDefaultApiOrigin(origin) && browser.permissions?.request) {
+      return browser.permissions.request({
+        origins: [`${origin}/*`]
+      });
+    }
+    return true;
   }
 
   function clearChildren(el) {
@@ -42,6 +53,7 @@
     let timer = null;
     let items = [];
     let activeIdx = -1;
+    let searchSeq = 0;
 
     function syncSelectedBadge() {
       const sel = state[kind];
@@ -61,6 +73,7 @@
     }
 
     function selectItem(item) {
+      searchSeq += 1;
       state[kind] = { id: item.id, name: item.name };
       input.value = item.name;
       syncSelectedBadge();
@@ -97,7 +110,7 @@
       input.setAttribute("aria-expanded", "true");
     }
 
-    async function runSearch(query) {
+    async function runSearch(query, seq) {
       let apiUrl = DEFAULT_API_URL;
       try {
         apiUrl = normalizeApiUrl(document.getElementById("api-url-input").value);
@@ -112,6 +125,9 @@
         limit: 15,
         apiUrl
       });
+      if (seq !== searchSeq) {
+        return;
+      }
       if (!resp || !resp.ok || !Array.isArray(resp.data?.items)) {
         items = [];
         closeList();
@@ -124,13 +140,19 @@
 
     input.addEventListener("input", () => {
       const q = input.value.trim();
+      searchSeq += 1;
+      const seq = searchSeq;
+      if (state[kind] && q !== state[kind].name) {
+        state[kind] = null;
+        syncSelectedBadge();
+      }
       clearTimeout(timer);
       if (q.length < 2) {
         items = [];
         closeList();
         return;
       }
-      timer = setTimeout(() => runSearch(q), 200);
+      timer = setTimeout(() => runSearch(q, seq), 200);
     });
 
     input.addEventListener("keydown", (e) => {
@@ -159,6 +181,7 @@
     });
 
     clearBtn.addEventListener("click", () => {
+      searchSeq += 1;
       state[kind] = null;
       input.value = "";
       syncSelectedBadge();
@@ -237,8 +260,17 @@
         ramUI.ramInput.value = String(state.ramGb);
       }
       if (cfg.apiUrl) {
-        state.apiUrl = cfg.apiUrl;
-        apiInput.value = cfg.apiUrl;
+        let loadedUrl = cfg.apiUrl;
+        try {
+          const parsed = new URL(cfg.apiUrl);
+          if (LEGACY_API_ORIGINS.has(parsed.origin) && parsed.pathname.replace(/\/+$/, "") === "") {
+            loadedUrl = DEFAULT_API_URL;
+          }
+        } catch {
+          // Keep existing string so user can inspect/correct it.
+        }
+        state.apiUrl = loadedUrl;
+        apiInput.value = loadedUrl;
       }
     }
     cpuUI.syncSelectedBadge();
@@ -253,6 +285,11 @@
         healthStatus.textContent = err.message;
         return;
       }
+      const granted = await ensureOriginPermission(url);
+      if (!granted) {
+        healthStatus.textContent = "Permission denied for custom API origin.";
+        return;
+      }
       healthStatus.textContent = "Testing...";
       const resp = await browser.runtime.sendMessage({
         action: "vapor:health",
@@ -263,6 +300,10 @@
         return;
       }
       const d = resp.data || {};
+      if (d.status !== "ok" || !d.db_ready) {
+        healthStatus.textContent = "Error: Unexpected health response";
+        return;
+      }
       const dateStr = d.generated_at ? String(d.generated_at).slice(0, 10) : "";
       healthStatus.textContent = `Connected \u2014 ${Number(d.cpu_count || 0).toLocaleString()} CPUs, ${Number(d.gpu_count || 0).toLocaleString()} GPUs (${d.source || "db"} ${dateStr})`;
     });
@@ -292,15 +333,10 @@
         return;
       }
 
-      const origin = new URL(normalizedUrl).origin;
-      if (!isDefaultApiOrigin(origin) && browser.permissions?.request) {
-        const granted = await browser.permissions.request({
-          origins: [`${origin}/*`]
-        });
-        if (!granted) {
-          showSaveStatus("Permission denied for custom API origin.", true);
-          return;
-        }
+      const granted = await ensureOriginPermission(normalizedUrl);
+      if (!granted) {
+        showSaveStatus("Permission denied for custom API origin.", true);
+        return;
       }
 
       await browser.storage.sync.set({
