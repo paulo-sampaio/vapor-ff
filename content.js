@@ -6,7 +6,7 @@
     return;
   }
 
-  const DEFAULT_API_URL = "https://vapor.nargothrond.pub";
+  const DEFAULT_API_URL = "https://vapor.kirimure.io";
   let runSeq = 0;
 
   function isConfigured(cfg) {
@@ -211,8 +211,11 @@
     }
   }
 
-  function renderError(tiers, apiUrl) {
-    const msg = `Vapor API unreachable at ${apiUrl || DEFAULT_API_URL}. Click to check settings.`;
+  function renderError(tiers, apiUrl, resp) {
+    const cleanUrl = apiUrl === "https://vapor.nargothrond.pub" ? DEFAULT_API_URL : (apiUrl || DEFAULT_API_URL);
+    const msg = resp?.errorType === "http" && resp.message
+      ? `Vapor API error: ${resp.message} Click to check settings.`
+      : `Vapor API unreachable at ${cleanUrl}. Click to check settings.`;
     for (const tier of tiers) {
       if (tier.headingEl) {
         tier.headingEl.insertAdjacentElement("afterend", createActionBadge("!", "vapor-badge--error", msg));
@@ -243,6 +246,7 @@
 
   async function evaluatePage() {
     const currentRun = ++runSeq;
+    clearInjectedUI();
     const tiers = DOM.extractSystemRequirements(document);
     if (tiers.length === 0) {
       return;
@@ -280,17 +284,26 @@
       }))
     };
 
-    const resp = await browser.runtime.sendMessage({
-      action: "vapor:compare",
-      payload
-    });
+    let resp;
+    try {
+      resp = await browser.runtime.sendMessage({
+        action: "vapor:compare",
+        payload
+      });
+    } catch (err) {
+      resp = {
+        ok: false,
+        errorType: "network",
+        message: err?.message || "Extension messaging error"
+      };
+    }
     if (currentRun !== runSeq) {
       return;
     }
 
     clearInjectedUI();
     if (!resp || !resp.ok || !resp.data?.results) {
-      renderError(tiers, cfg.apiUrl || DEFAULT_API_URL);
+      renderError(tiers, cfg.apiUrl || DEFAULT_API_URL, resp);
       return;
     }
     renderResults(tiers, resp.data.results);
