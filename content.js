@@ -9,6 +9,53 @@
   const DEFAULT_API_URL = "https://vapor.kirimure.io";
   let runSeq = 0;
 
+  function isCoarsePointer() {
+    return Boolean(window.matchMedia?.("(hover: none) and (pointer: coarse)")?.matches);
+  }
+
+  function closeAllTooltips(exceptWrap) {
+    document.querySelectorAll(".vapor-pill-wrap.is-open").forEach((wrap) => {
+      if (wrap !== exceptWrap) {
+        wrap.classList.remove("is-open");
+      }
+    });
+  }
+
+  function positionTooltip(wrap) {
+    const tip = wrap?.querySelector?.(".vapor-tooltip");
+    if (!tip) {
+      return;
+    }
+    tip.style.left = "";
+    const rect = tip.getBoundingClientRect();
+    if (rect.width <= 0) {
+      return;
+    }
+    const margin = 12;
+    const viewportWidth = document.documentElement.clientWidth || window.innerWidth;
+    let delta = 0;
+    if (rect.right > viewportWidth - margin) {
+      delta = (viewportWidth - margin) - rect.right;
+    }
+    if (rect.left + delta < margin) {
+      delta = margin - rect.left;
+    }
+    if (delta !== 0) {
+      const currentLeft = parseFloat(getComputedStyle(tip).left) || 0;
+      tip.style.left = `${currentLeft + delta}px`;
+    }
+  }
+
+  document.addEventListener("pointerdown", (e) => {
+    if (!e.target?.closest?.(".vapor-pill-wrap")) {
+      closeAllTooltips(null);
+    }
+  });
+
+  window.addEventListener("resize", () => {
+    document.querySelectorAll(".vapor-pill-wrap.is-open").forEach(positionTooltip);
+  });
+
   function isConfigured(cfg) {
     return Boolean(cfg && cfg.cpu?.id && cfg.gpu?.id && Number(cfg.ramGb) > 0);
   }
@@ -37,6 +84,13 @@
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
+      if (isCoarsePointer() && !wrap.classList.contains("is-open")) {
+        closeAllTooltips(wrap);
+        wrap.classList.add("is-open");
+        positionTooltip(wrap);
+        return;
+      }
+      closeAllTooltips(null);
       browser.runtime.sendMessage({ action: "vapor:openOptions" });
     });
 
@@ -47,6 +101,21 @@
     tipLine.className = "vapor-tooltip-line";
     tipLine.textContent = tooltipText;
     tip.appendChild(tipLine);
+
+    const openSettingsBtn = document.createElement("button");
+    openSettingsBtn.type = "button";
+    openSettingsBtn.className = "vapor-tooltip-btn";
+    openSettingsBtn.textContent = "Open Settings";
+    openSettingsBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      closeAllTooltips(null);
+      browser.runtime.sendMessage({ action: "vapor:openOptions" });
+    });
+    tip.appendChild(openSettingsBtn);
+
+    wrap.addEventListener("mouseenter", () => positionTooltip(wrap));
+    wrap.addEventListener("focusin", () => positionTooltip(wrap));
 
     wrap.appendChild(btn);
     wrap.appendChild(tip);
@@ -104,6 +173,17 @@
         break;
     }
     pill.textContent = labelText;
+    pill.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const willOpen = !wrap.classList.contains("is-open");
+      closeAllTooltips(wrap);
+      wrap.classList.toggle("is-open", willOpen);
+      if (willOpen) {
+        positionTooltip(wrap);
+      }
+    });
+    wrap.addEventListener("mouseenter", () => positionTooltip(wrap));
+    wrap.addEventListener("focusin", () => positionTooltip(wrap));
 
     const tip = document.createElement("div");
     tip.className = "vapor-tooltip";

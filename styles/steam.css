@@ -115,7 +115,9 @@
   border-radius: 8px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
   z-index: 9999;
-  width: 290px;
+  width: min(290px, calc(100vw - 24px));
+  max-width: calc(100vw - 24px);
+  box-sizing: border-box;
   padding: 10px 12px;
   font-size: 12px;
   font-weight: 400;
@@ -128,6 +130,15 @@
 .vapor-pill-wrap:hover .vapor-tooltip,
 .vapor-pill-wrap:focus-within .vapor-tooltip {
   display: block;
+}
+
+.vapor-pill-wrap.is-open .vapor-tooltip {
+  display: block;
+  pointer-events: auto;
+}
+
+.vapor-tooltip-btn {
+  display: none;
 }
 
 .vapor-tooltip-title {
@@ -181,4 +192,35 @@
 .game_area_sys_req_rightCol,
 .game_area_sys_req_full {
   overflow: visible !important;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .vapor-pill {
+    padding: 3px 10px;
+    font-size: 12px;
+  }
+
+  .vapor-inline-pill {
+    padding: 2px 8px;
+    font-size: 11px;
+  }
+
+  .vapor-badge {
+    width: 24px;
+    height: 24px;
+    font-size: 13px;
+  }
+
+  .vapor-tooltip-btn {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(211, 168, 89, 0.65);
+    background: rgba(44, 79, 110, 0.75);
+    color: #f7efe4;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
 }
