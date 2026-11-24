@@ -1,0 +1,184 @@
+.vapor-pill-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.vapor-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.4;
+  vertical-align: middle;
+  cursor: help;
+  position: relative;
+  letter-spacing: 0.02em;
+}
+
+.vapor-inline-pill {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+  padding: 0 6px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.5;
+  vertical-align: middle;
+}
+
+.vapor-inline-pill--link {
+  text-decoration: none;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.vapor-inline-pill--link:hover,
+.vapor-inline-pill--link:focus-visible {
+  filter: brightness(1.18);
+  text-decoration: underline;
+  outline: none;
+}
+
+.vapor-pill--pass {
+  background: rgba(46, 160, 67, 0.22);
+  color: #7ee787;
+  border: 1px solid rgba(126, 231, 135, 0.45);
+}
+
+.vapor-pill--fail {
+  background: rgba(248, 81, 73, 0.22);
+  color: #ffa198;
+  border: 1px solid rgba(255, 161, 152, 0.45);
+}
+
+.vapor-pill--ram-warning {
+  border-color: #d3a859;
+  box-shadow: 0 0 0 1px rgba(211, 168, 89, 0.35);
+}
+
+.vapor-pill--unavailable {
+  background: rgba(139, 148, 158, 0.18);
+  color: #acb2b8;
+  border: 1px solid rgba(172, 178, 184, 0.35);
+}
+
+.vapor-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-left: 8px;
+  padding: 0;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.vapor-badge--unconfigured {
+  background: rgba(44, 79, 110, 0.55);
+  color: #f7efe4;
+  border: 1px solid rgba(211, 168, 89, 0.65);
+}
+
+.vapor-badge--error {
+  background: rgba(248, 81, 73, 0.22);
+  color: #f0c674;
+  border: 1px solid rgba(211, 168, 89, 0.7);
+}
+
+.vapor-badge:hover,
+.vapor-badge:focus-visible {
+  transform: scale(1.08);
+  border-color: #d3a859;
+  outline: none;
+}
+
+.vapor-tooltip {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 8px;
+  background: #121e2a;
+  color: #e6edf3;
+  border: 1px solid rgba(211, 168, 89, 0.4);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  z-index: 9999;
+  width: 290px;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.45;
+  text-align: left;
+  white-space: normal;
+  pointer-events: none;
+}
+
+.vapor-pill-wrap:hover .vapor-tooltip,
+.vapor-pill-wrap:focus-within .vapor-tooltip {
+  display: block;
+}
+
+.vapor-tooltip-title {
+  font-weight: 700;
+  color: #d3a859;
+  margin-bottom: 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.vapor-tooltip-line {
+  color: #e6edf3;
+}
+
+.vapor-tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.vapor-tooltip-row--warn .vapor-tooltip-val {
+  color: #f0c674;
+  font-weight: 600;
+}
+
+.vapor-tooltip-key {
+  color: #8b949e;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.vapor-tooltip-val {
+  color: #e6edf3;
+  text-align: right;
+}
+
+.vapor-tooltip-note {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: #acb2b8;
+  font-size: 11px;
+}
+
+/* Prevent Steam's requirement column from clipping tooltips */
+.game_area_sys_req,
+.game_area_sys_req_leftCol,
+.game_area_sys_req_rightCol,
+.game_area_sys_req_full {
+  overflow: visible !important;
+}
