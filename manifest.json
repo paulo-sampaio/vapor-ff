@@ -1,0 +1,50 @@
+{
+  "manifest_version": 3,
+  "name": "Vapor — Steam Hardware Compare",
+  "version": "1.0.0",
+  "description": "Compare your CPU, GPU, and RAM against Steam minimum and recommended system requirements.",
+  "icons": {
+    "48": "icons/icon.svg",
+    "96": "icons/icon.svg"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "vapor@nargothrond.pub",
+      "strict_min_version": "142.0",
+      "data_collection_permissions": {
+        "required": ["websiteContent"]
+      }
+    }
+  },
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://store.steampowered.com/*",
+    "https://vapor.nargothrond.pub/*"
+  ],
+  "optional_host_permissions": [
+    "https://*/*",
+    "http://*/*"
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "action": {
+    "default_title": "Vapor Hardware Settings",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "48": "icons/icon.svg"
+    }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://store.steampowered.com/app/*"],
+      "js": ["scripts/steam_dom.js", "content.js"],
+      "css": ["styles/steam.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}
