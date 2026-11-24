@@ -21,10 +21,12 @@
     <form id="vapor-form" novalidate>
       <div class="vapor-field">
         <label class="vapor-label" for="cpu-input">Processor (CPU)</label>
-        <input id="cpu-input" class="vapor-input" type="text" autocomplete="off"
-               placeholder="Search CPU (e.g. Ryzen 5 5600X, i5-12400F)"
-               role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="cpu-listbox">
-        <ul id="cpu-listbox" class="vapor-listbox" role="listbox" hidden></ul>
+        <div class="vapor-combobox-wrap">
+          <input id="cpu-input" class="vapor-input" type="text" autocomplete="off"
+                 placeholder="Search CPU (e.g. Ryzen 5 5600X, i5-12400F)"
+                 role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="cpu-listbox">
+          <ul id="cpu-listbox" class="vapor-listbox" role="listbox" hidden></ul>
+        </div>
         <div id="cpu-selected" class="vapor-selected-badge" hidden>
           <span id="cpu-selected-name"></span>
           <button id="cpu-clear" type="button" class="vapor-clear-btn" aria-label="Clear CPU">&times;</button>
@@ -33,10 +35,12 @@
 
       <div class="vapor-field">
         <label class="vapor-label" for="gpu-input">Graphics (GPU)</label>
-        <input id="gpu-input" class="vapor-input" type="text" autocomplete="off"
-               placeholder="Search GPU (e.g. RTX 4070, RX 6700 XT)"
-               role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="gpu-listbox">
-        <ul id="gpu-listbox" class="vapor-listbox" role="listbox" hidden></ul>
+        <div class="vapor-combobox-wrap">
+          <input id="gpu-input" class="vapor-input" type="text" autocomplete="off"
+                 placeholder="Search GPU (e.g. RTX 4070, RX 6700 XT)"
+                 role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="gpu-listbox">
+          <ul id="gpu-listbox" class="vapor-listbox" role="listbox" hidden></ul>
+        </div>
         <div id="gpu-selected" class="vapor-selected-badge" hidden>
           <span id="gpu-selected-name"></span>
           <button id="gpu-clear" type="button" class="vapor-clear-btn" aria-label="Clear GPU">&times;</button>

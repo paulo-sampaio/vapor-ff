@@ -54,6 +54,8 @@
     let items = [];
     let activeIdx = -1;
     let searchSeq = 0;
+    let interactingWithList = false;
+    let blurTimer = null;
 
     function syncSelectedBadge() {
       const sel = state[kind];
@@ -100,8 +102,12 @@
 
         li.appendChild(nameSpan);
         li.appendChild(vendorSpan);
-        li.addEventListener("mousedown", (e) => {
-          e.preventDefault();
+        li.addEventListener("pointerdown", (e) => {
+          if (e.pointerType === "mouse") {
+            e.preventDefault();
+          }
+        });
+        li.addEventListener("click", () => {
           selectItem(item);
         });
         listbox.appendChild(li);
@@ -176,8 +182,36 @@
       }
     });
 
+    listbox.addEventListener("pointerdown", () => {
+      interactingWithList = true;
+      clearTimeout(blurTimer);
+    });
+
+    document.addEventListener("pointerup", () => {
+      setTimeout(() => {
+        interactingWithList = false;
+      }, 0);
+    });
+
+    document.addEventListener("pointercancel", () => {
+      setTimeout(() => {
+        interactingWithList = false;
+      }, 0);
+    });
+
+    document.addEventListener("pointerdown", (e) => {
+      if (!listbox.hidden && !input.contains(e.target) && !listbox.contains(e.target)) {
+        closeList();
+      }
+    });
+
     input.addEventListener("blur", () => {
-      setTimeout(closeList, 120);
+      clearTimeout(blurTimer);
+      blurTimer = setTimeout(() => {
+        if (!interactingWithList) {
+          closeList();
+        }
+      }, 150);
     });
 
     clearBtn.addEventListener("click", () => {
@@ -238,8 +272,8 @@
     const openFullBtn = document.getElementById("open-full-btn");
 
     if (openFullBtn) {
-      openFullBtn.addEventListener("click", () => {
-        browser.runtime.sendMessage({ action: "vapor:openOptions" });
+      openFullBtn.addEventListener("click", async () => {
+        await browser.runtime.sendMessage({ action: "vapor:openOptions" });
         window.close();
       });
     }

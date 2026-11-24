@@ -80,6 +80,7 @@ body[data-view="options"] {
 
 body[data-view="popup"] {
   width: 380px;
+  max-width: 100%;
   background: var(--bg-page);
   padding: 12px;
 }
@@ -217,11 +218,15 @@ body[data-view="popup"] .vapor-card {
   color: var(--noite-profunda);
 }
 
+.vapor-combobox-wrap {
+  position: relative;
+}
+
 .vapor-listbox {
   position: absolute;
   left: 0;
   right: 0;
-  top: 66px;
+  top: calc(100% + 4px);
   z-index: 30;
   background: var(--renda);
   border: 1px solid var(--border-light);
@@ -378,4 +383,60 @@ body[data-view="popup"] .vapor-card {
 .vapor-health-text {
   font-size: 12px;
   color: var(--text-muted);
+}
+
+@media (hover: none) and (pointer: coarse) {
+  body[data-view="popup"] {
+    width: 100%;
+    padding: 16px;
+  }
+
+  body[data-view="popup"] .vapor-card {
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  body[data-view="options"] {
+    padding: 16px 12px;
+  }
+
+  .vapor-input {
+    font-size: 16px;
+    padding: 11px 12px;
+  }
+
+  .vapor-option {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .vapor-ram-pill {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .vapor-ram-input {
+    padding: 8px 10px;
+    font-size: 16px;
+  }
+
+  .vapor-clear-btn {
+    padding: 4px 8px;
+    font-size: 16px;
+  }
+
+  .vapor-link-btn {
+    padding: 8px 6px;
+    font-size: 13px;
+  }
+
+  .vapor-btn-primary {
+    padding: 12px 16px;
+    font-size: 15px;
+  }
+
+  .vapor-btn-secondary {
+    padding: 9px 14px;
+    font-size: 13px;
+  }
 }
