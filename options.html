@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vapor — Hardware Settings</title>
+  <link rel="stylesheet" href="styles/settings.css">
+</head>
+<body data-view="options">
+  <main class="vapor-card">
+    <header class="vapor-header">
+      <div class="vapor-brand">
+        <img src="icons/icon.svg" alt="" class="vapor-logo">
+        <div>
+          <h1 class="vapor-title">Vapor</h1>
+          <p class="vapor-subtitle">Compare Steam specs with your PC</p>
+        </div>
+      </div>
+    </header>
+
+    <form id="vapor-form" novalidate>
+      <div class="vapor-field">
+        <label class="vapor-label" for="cpu-input">Processor (CPU)</label>
+        <input id="cpu-input" class="vapor-input" type="text" autocomplete="off"
+               placeholder="Search CPU (e.g. Ryzen 5 5600X, i5-12400F)"
+               role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="cpu-listbox">
+        <ul id="cpu-listbox" class="vapor-listbox" role="listbox" hidden></ul>
+        <div id="cpu-selected" class="vapor-selected-badge" hidden>
+          <span id="cpu-selected-name"></span>
+          <button id="cpu-clear" type="button" class="vapor-clear-btn" aria-label="Clear CPU">&times;</button>
+        </div>
+      </div>
+
+      <div class="vapor-field">
+        <label class="vapor-label" for="gpu-input">Graphics (GPU)</label>
+        <input id="gpu-input" class="vapor-input" type="text" autocomplete="off"
+               placeholder="Search GPU (e.g. RTX 4070, RX 6700 XT)"
+               role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="gpu-listbox">
+        <ul id="gpu-listbox" class="vapor-listbox" role="listbox" hidden></ul>
+        <div id="gpu-selected" class="vapor-selected-badge" hidden>
+          <span id="gpu-selected-name"></span>
+          <button id="gpu-clear" type="button" class="vapor-clear-btn" aria-label="Clear GPU">&times;</button>
+        </div>
+      </div>
+
+      <div class="vapor-field">
+        <label class="vapor-label" for="ram-input">System Memory (RAM in GB)</label>
+        <div class="vapor-ram-row">
+          <button type="button" class="vapor-ram-pill" data-ram="4">4 GB</button>
+          <button type="button" class="vapor-ram-pill" data-ram="8">8 GB</button>
+          <button type="button" class="vapor-ram-pill" data-ram="16">16 GB</button>
+          <button type="button" class="vapor-ram-pill" data-ram="32">32 GB</button>
+          <button type="button" class="vapor-ram-pill" data-ram="64">64 GB</button>
+          <button type="button" class="vapor-ram-pill" data-ram="128">128 GB</button>
+          <input id="ram-input" class="vapor-ram-input" type="number" min="1" max="4096" step="1" value="16" aria-label="Custom RAM in GB">
+        </div>
+      </div>
+
+      <details class="vapor-advanced">
+        <summary>Advanced</summary>
+        <div class="vapor-advanced-body">
+          <label class="vapor-label" for="api-url-input">API URL</label>
+          <input id="api-url-input" class="vapor-input" type="url" value="https://vapor.nargothrond.pub" placeholder="https://vapor.nargothrond.pub">
+          <div class="vapor-row-actions">
+            <button id="test-conn-btn" type="button" class="vapor-btn-secondary">Test Connection</button>
+            <span id="health-status" class="vapor-health-text"></span>
+          </div>
+        </div>
+      </details>
+
+      <button id="save-btn" type="submit" class="vapor-btn-primary">Save Configuration</button>
+      <div id="save-status" class="vapor-status" hidden></div>
+    </form>
+  </main>
+  <script src="scripts/settings.js"></script>
+</body>
+</html>
