@@ -18,7 +18,7 @@ jobs:
 
       - name: Validate manifest and run tests
         run: |
-          python3 -c 'import json; m=json.load(open("manifest.json")); assert m["manifest_version"]==3; assert m["browser_specific_settings"]["gecko"]["data_collection_permissions"]["required"]==["websiteContent"]; assert "https://vapor.nargothrond.pub/*" in m["host_permissions"]'
+          python3 -c 'import json; m=json.load(open("manifest.json")); assert m["manifest_version"]==3; assert m["browser_specific_settings"]["gecko"]["data_collection_permissions"]["required"]==["websiteContent"]; assert "https://vapor.kirimure.io/*" in m["host_permissions"]'
           node --test tests/*.test.js
           ! grep -rnE "innerHTML|outerHTML|insertAdjacentHTML|eval\(" . --exclude-dir=.git --exclude-dir=.github --exclude-dir=.agents --exclude='*.md'
 

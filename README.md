@@ -2,7 +2,7 @@
 
 **Vapor** is a minimalist Firefox Manifest V3 extension (`strict_min_version: "142.0"`) that compares your PC's CPU, GPU, and RAM against `MINIMUM` and `RECOMMENDED` system requirements on Steam store pages (`https://store.steampowered.com/app/*`), rendering percentage pills, breakdown tooltips, and direct 3-way PassMark comparison links.
 
-It pairs with the [Vapor Go + SQLite REST API (`vapor-api`)](https://github.com/paulo-sampaio/vapor-api), defaulting to `https://vapor.nargothrond.pub`.
+It pairs with the [Vapor Go + SQLite REST API (`vapor-api`)](https://github.com/paulo-sampaio/vapor-api), defaulting to `https://vapor.kirimure.io`.
 
 ## Features & User Experience
 
@@ -66,7 +66,7 @@ Run all commands from `extension-ff/`:
 node --test tests/*.test.js
 
 # Manifest & zero-innerHTML/eval policy checks
-python3 -c 'import json; m=json.load(open("manifest.json")); assert m["manifest_version"]==3; assert m["browser_specific_settings"]["gecko"]["data_collection_permissions"]["required"]==["websiteContent"]; assert "https://vapor.nargothrond.pub/*" in m["host_permissions"]'
+python3 -c 'import json; m=json.load(open("manifest.json")); assert m["manifest_version"]==3; assert m["browser_specific_settings"]["gecko"]["data_collection_permissions"]["required"]==["websiteContent"]; assert "https://vapor.kirimure.io/*" in m["host_permissions"]'
 ! grep -rnE "innerHTML|outerHTML|insertAdjacentHTML|eval\(" . --exclude-dir=.git --exclude-dir=.github --exclude-dir=.agents --exclude='*.md'
 
 # Lint & build uploadable zip for addons.mozilla.org (AMO)

@@ -16,7 +16,7 @@ jobs:
 
       - name: Validate Firefox MV3 manifest
         run: |
-          python3 -c 'import json; m=json.load(open("manifest.json")); assert m["manifest_version"]==3; assert m["browser_specific_settings"]["gecko"]["data_collection_permissions"]["required"]==["websiteContent"]; assert "https://vapor.nargothrond.pub/*" in m["host_permissions"]'
+          python3 -c 'import json; m=json.load(open("manifest.json")); assert m["manifest_version"]==3; assert m["browser_specific_settings"]["gecko"]["data_collection_permissions"]["required"]==["websiteContent"]; assert "https://vapor.kirimure.io/*" in m["host_permissions"]'
 
       - name: Run extension unit tests
         run: node --test tests/*.test.js

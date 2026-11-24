@@ -4,7 +4,7 @@
 
 ## Data Sent to the API
 
-When you search for hardware in settings or visit a Steam store page (`https://store.steampowered.com/app/*`), the extension sends the following data to the configured Vapor API (default: `https://vapor.nargothrond.pub`):
+When you search for hardware in settings or visit a Steam store page (`https://store.steampowered.com/app/*`), the extension sends the following data to the configured Vapor API (default: `https://vapor.kirimure.io`):
 
 - **Hardware Search:** The CPU or GPU search query string you type.
 - **Steam Spec Comparison:** Your selected CPU ID, GPU ID, RAM amount (in GB), and the public system requirement text extracted from the Steam store page.
