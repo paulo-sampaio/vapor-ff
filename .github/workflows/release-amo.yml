@@ -1,0 +1,49 @@
+name: Package & Publish to AMO
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  package-and-sign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Validate manifest and run tests
+        run: |
+          python3 -c 'import json; m=json.load(open("manifest.json")); assert m["manifest_version"]==3; assert m["browser_specific_settings"]["gecko"]["data_collection_permissions"]["required"]==["websiteContent"]; assert "https://vapor.nargothrond.pub/*" in m["host_permissions"]'
+          node --test tests/*.test.js
+          ! grep -rnE "innerHTML|outerHTML|insertAdjacentHTML|eval\(" . --exclude-dir=.git --exclude-dir=.github --exclude-dir=.agents --exclude='*.md'
+
+      - name: Lint extension with web-ext
+        run: |
+          npx --yes web-ext lint -s . --ignore-files ".git/**" ".github/**" ".agents/**" "tests/**" "*.md"
+
+      - name: Build AMO zip artifact
+        run: |
+          npx --yes web-ext build -s . --ignore-files ".git/**" ".github/**" ".agents/**" "tests/**" "*.md"
+
+      - name: Upload packaged zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: vapor-firefox-extension
+          path: web-ext-artifacts/*.zip
+
+      - name: Sign & publish to AMO (when credentials configured)
+        if: ${{ secrets.AMO_JWT_ISSUER != '' && secrets.AMO_JWT_SECRET != '' }}
+        env:
+          AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
+          AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+        run: |
+          npx --yes web-ext sign -s . \
+            --ignore-files ".git/**" ".github/**" ".agents/**" "tests/**" "*.md" \
+            --channel=listed \
+            --api-key="$AMO_JWT_ISSUER" \
+            --api-secret="$AMO_JWT_SECRET"
