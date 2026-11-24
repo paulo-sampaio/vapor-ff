@@ -130,8 +130,15 @@
     if (!blockEl || typeof blockEl.querySelector !== "function") {
       return null;
     }
-    const strongDirect = blockEl.querySelector("ul > strong, p > strong, h2, h3, strong");
-    return strongDirect || null;
+    const strongDirect = blockEl.querySelector("ul > strong, p > strong, h2, h3");
+    if (strongDirect) {
+      return strongDirect;
+    }
+    const fallback = blockEl.querySelector("strong");
+    if (fallback && !(typeof fallback.closest === "function" && fallback.closest("li"))) {
+      return fallback;
+    }
+    return null;
   }
 
   function parseTierBlock(blockEl, os, tier) {

@@ -119,3 +119,52 @@ test("extractSystemRequirements extracts multiple OS tabs and tiers", () => {
   assert.equal(tiers[2].key, "linux:minimum");
   assert.equal(tiers[2].gpu, "");
 });
+
+test("extractSystemRequirements ignores li > strong when no tier heading exists", () => {
+  const osLabelStrong = {
+    textContent: "OS:",
+    closest(sel) {
+      return sel === "li" ? {} : null;
+    }
+  };
+  const osLi = {
+    textContent: "OS: Windows 10",
+    querySelector(sel) {
+      return sel === "strong" ? osLabelStrong : null;
+    }
+  };
+  const cpuLi = makeLi("Processor:", "AMD Ryzen 5 3600");
+
+  const blockNoHeading = {
+    querySelector(sel) {
+      if (sel === "strong") {
+        return osLabelStrong;
+      }
+      return null;
+    },
+    querySelectorAll(sel) {
+      return sel === "li" ? [osLi, cpuLi] : [];
+    }
+  };
+
+  const mockDoc = {
+    querySelectorAll(sel) {
+      if (sel === ".game_area_sys_req[data-os]") {
+        return [{
+          getAttribute() {
+            return "win";
+          },
+          querySelector(q) {
+            return q === ".game_area_sys_req_leftCol" ? blockNoHeading : null;
+          }
+        }];
+      }
+      return [];
+    }
+  };
+
+  const tiers = DOM.extractSystemRequirements(mockDoc);
+  assert.equal(tiers.length, 1);
+  assert.equal(tiers[0].headingEl, null);
+  assert.equal(tiers[0].cpu, "AMD Ryzen 5 3600");
+});
